@@ -23,8 +23,9 @@ const PokemonDetailViewModel = ({
 
   const getPokemon = async (name: string) => {
     const { result, error } = await getPokemonUseCase.execute(name);
-    setError((error && error.message) || "");
-    setPokemon({ ...result });
+    console.log({ result, error });
+    setError(error?.message || "");
+    setPokemon(result);
   };
 
   return {

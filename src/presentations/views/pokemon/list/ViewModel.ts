@@ -24,8 +24,8 @@ const PokemonListViewModel = ({
 
   const getPokemons = async (offset?: number) => {
     const { result, error } = await getPokemonsUseCase.execute(offset);
-    setError((error && error.message) || "");
-    setPokemonList({ ...result });
+    setError(error?.message || "");
+    setPokemonList(result);
   };
 
   return {
