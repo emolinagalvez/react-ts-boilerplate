@@ -7,10 +7,10 @@ const mockPokemonDataSource = {
 };
 
 describe("PokemonRepository", () => {
-  let PokemonRepository;
+  let pokemonRepository;
 
   beforeEach(() => {
-    PokemonRepository = PokemonRepository({
+    pokemonRepository = PokemonRepository({
       PokemonDataSource: mockPokemonDataSource,
     });
   });
@@ -21,51 +21,64 @@ describe("PokemonRepository", () => {
 
   describe("getPokemons", () => {
     it("should get all pokemons and return the result", async () => {
+      const offset = 20;
+
       const expectedResult = { result: "some string", error: null };
+
       mockPokemonDataSource.getAll.mockResolvedValue(expectedResult);
 
-      const result = await PokemonRepository.getPokemons();
+      const result = await pokemonRepository.getPokemons(offset);
 
-      expect(mockPokemonDataSource.getAll).toHaveBeenCalled();
+      expect(mockPokemonDataSource.getAll).toHaveBeenCalledWith(offset);
       expect(result).toEqual({ result: "some string", error: null });
     });
 
     it("should handle errors during get all and return the error", async () => {
       const expectedError = new Error("Failed to get the list of pokemons");
+
       const expectedResult = { result: null, error: expectedError };
+
       mockPokemonDataSource.getAll.mockResolvedValue(expectedResult);
 
-      const result = await PokemonRepository.getPokemons();
+      const result = await pokemonRepository.getPokemons();
 
-      expect(mockPokemonDataSource).toHaveBeenCalled();
-      expect(result).toEqual({ result: null, error: expectedError });
+      expect(mockPokemonDataSource.getAll).toHaveBeenCalled();
+      expect(result).toEqual({
+        result: null,
+        error: new Error("Failed to get the list of pokemons"),
+      });
     });
   });
 
   describe("getPokemon", () => {
     it("should get a pokemon by the name and return the result", async () => {
-      const name = "inventedName";
+      const name = "bulbasaur";
 
-      const expectedResult = { result: "success", error: null };
+      const expectedResult = { result: null, error: null };
+
       mockPokemonDataSource.getOne.mockResolvedValue(expectedResult);
 
-      const result = await PokemonRepository.getPokemon(name);
+      const result = await pokemonRepository.getPokemon(name);
 
-      expect(mockPokemonDataSource).toHaveBeenCalledWith(name);
-      expect(result).toEqual({ result: "success", error: null });
+      expect(mockPokemonDataSource.getOne).toHaveBeenCalledWith(name);
+      expect(result).toEqual({ result: null, error: null });
     });
 
     it("should handle errors during get one and return the error", async () => {
-      const name = "inventedName";
+      const name = "sandlash";
 
       const expectedError = new Error("Failed to get the pokemon");
       const expectedResult = { result: null, error: expectedError };
+
       mockPokemonDataSource.getOne.mockResolvedValue(expectedResult);
 
-      const result = await PokemonRepository.getPokemon(name);
+      const result = await pokemonRepository.getPokemon(name);
 
-      expect(mockPokemonDataSource).toHaveBeenCalledWith(name);
-      expect(result).toEqual(expectedResult);
+      expect(mockPokemonDataSource.getOne).toHaveBeenCalledWith(name);
+      expect(result).toEqual({
+        result: null,
+        error: new Error("Failed to get the pokemon"),
+      });
     });
   });
 });

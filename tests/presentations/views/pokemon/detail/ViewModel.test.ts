@@ -2,7 +2,7 @@ import "regenerator-runtime/runtime";
 import { act, renderHook } from "@testing-library/react";
 import PokemonDetailViewModel from "../../../../../src/presentations/views/pokemon/details/ViewModel";
 
-const mockgetPokemonUseCase = {
+const mockGetPokemonUseCase = {
   execute: jest.fn(),
 };
 
@@ -12,7 +12,7 @@ describe("PokemonDetailViewModel", () => {
   beforeAll(() => {
     vm = renderHook(() =>
       PokemonDetailViewModel({
-        getPokemonUseCase: mockgetPokemonUseCase,
+        getPokemonUseCase: mockGetPokemonUseCase,
       })
     );
   });
@@ -26,30 +26,28 @@ describe("PokemonDetailViewModel", () => {
 
     expect(result.current.error).toBe("");
     expect(result.current.name).toBe("");
+    expect(result.current.imageUrl).toBe("");
   });
 
   describe("getPokemon", () => {
     it("should call getPokemonUseCase and update state values on getPokemon", async () => {
       const { result } = vm;
 
-      const pokemonName = "ditto";
+      const pokemonName = "venusaur";
 
       const expectedData = {
-        name: "Ditto",
-        order: 214,
+        result: {
+          name: pokemonName,
+        },
+        error: null,
       };
 
-      mockgetPokemonUseCase.execute.mockResolvedValue({
-        result: expectedData,
-        error: null,
-      });
+      mockGetPokemonUseCase.execute.mockResolvedValue(expectedData);
 
       await act(async () => await result.current.getPokemon(pokemonName));
 
-      expect(mockgetPokemonUseCase.execute).toHaveBeenCalledWith(pokemonName);
-      expect(result.current.error).toBe("");
-      expect(result.current.name).toBe(expectedData.name);
-      expect(result.current.order).toBe(expectedData.order);
+      expect(mockGetPokemonUseCase.execute).toHaveBeenCalledWith(pokemonName);
+      expect(result.current.name).toBe(pokemonName);
       expect(result.current.error).toBe("");
     });
   });
